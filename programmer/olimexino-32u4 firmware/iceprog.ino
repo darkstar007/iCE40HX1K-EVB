@@ -1,3 +1,4 @@
+
 /*
  *  iceprog -- firmware scetch for Arduino based Lattice iCE programmers
  *
@@ -26,8 +27,8 @@
 
 #include <SPI.h>
 
-// Install SPIFlash v2.2.0 Arduino Library; Sketch -> Include Library -> Manage Libraries
-// SPIFlash 2.2.0 library for Winbond Flash Memory by Prajwal Bhattaram - Marzogh
+// Install SPIFlash v2.7.0 Arduino Library; Sketch -> Include Library -> Manage Libraries
+// SPIFlash 2.7.0 library for Winbond Flash Memory by Prajwal Bhattaram - Marzogh
 
 #include <SPIFlash.h>
 
@@ -56,8 +57,8 @@
 #define TFEND   0xdc
 #define TFESC  0xdd
 
-#define cselect digitalWrite(CS,LOW)
-#define deselect digitalWrite(CS,HIGH)
+#define cselect digitalWrite(CS, LOW)
+#define deselect digitalWrite(CS, HIGH)
 uint8_t rxframe[512], txframe[512], fcs,rfcs;
 uint8_t membuf[256];
 uint8_t data_buffer[256];
@@ -84,6 +85,7 @@ void setup() {
    digitalWrite(UEXT_POWER, LOW);
    delay(500);
    digitalWrite(RESET, HIGH);
+   flash.begin();
    Serial.begin(230400);
    while (!Serial); 
 }
@@ -217,8 +219,11 @@ flash.powerUp();
 for (x=0; x<256;x++)
               membuf[x]=rxframe[x+3];
 
-flash.writePage(pagenr,membuf);
-flash.readPage(pagenr,data_buffer);
+//flash.writePage(pagenr, membuf);
+//flash.readPage(pagenr, data_buffer);
+flash.writeByteArray(pagenr, 0, membuf, 256);
+flash.readByteArray(pagenr, 0, data_buffer, 256);
+
 flash.powerDown();
 
  for (int a = 0; a < 256; a++)
@@ -326,7 +331,8 @@ void  readpage(uint16_t adr){
 bool sendempty = true;  
 //delay(5);
 
- flash.readPage(adr,data_buffer);
+ //flash.readPage(adr, data_buffer);
+flash.readByteArray(adr, 0, data_buffer, 256);
 
  for (int a = 0; a < 256; a++){
   if (data_buffer[a] != 0xff){
