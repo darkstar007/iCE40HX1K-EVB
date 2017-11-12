@@ -7,10 +7,10 @@ all: $(EXECUTE)
 
 $(EXECUTE): $(NAME).o
 	$(CC) $(NAME).o -o $(EXECUTE)
-	
+
 clean:
 	rm -rf *.o $(EXECUTE)
 
-install:
+install:	$(EXECUTE)
 	cp $(EXECUTE) /usr/local/bin/$(EXECUTE)
 
